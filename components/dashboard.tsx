@@ -1,0 +1,103 @@
+"use client";
+
+import * as React from "react";
+import Link from "next/link";
+import Logo from "@/components/Logo";
+import { supabase } from "@/utils/supabaseClient";
+import { Avatar } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+    Item,
+    ItemActions,
+    ItemContent,
+    ItemDescription,
+    ItemMedia,
+    ItemTitle,
+} from "@/components/ui/item";
+
+export function Dashboard() {
+    const [email, setEmail] = React.useState<string | null>(null);
+    const [createdAt, setCreatedAt] = React.useState<string | null>(null);
+    const [loading, setLoading] = React.useState(false);
+
+    React.useEffect(() => {
+        async function fetchUser() {
+            const {
+                data: { user },
+            } = await supabase.auth.getUser();
+            if (user) {
+                setEmail(user.email ?? "");
+                setCreatedAt(user.created_at ?? "");
+            }
+        }
+        fetchUser();
+    }, []);
+
+    async function handleLogout() {
+        setLoading(true);
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            console.error("Sign out error:", error.message);
+            setLoading(false);
+        } else {
+            window.location.href = "/";
+        }
+    }
+
+    return (
+        <div className="flex w-full max-w-lg flex-col">
+            <Item variant="outline">
+                <ItemMedia>
+                    <Avatar className="size-10">
+                        <Link href="/dashboard">
+                            <Logo />
+                        </Link>
+                    </Avatar>
+                </ItemMedia>
+                <ItemContent>
+                    <ItemTitle>
+                        {email ? email : <Skeleton className="h-4 w-[150px]" />}
+                    </ItemTitle>
+
+                    <ItemDescription className="text-xs">
+                        {createdAt ? (
+                            <ItemDescription className="text-xs">
+                                Account created:{" "}
+                                {new Date(createdAt).toLocaleString("en-US", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit",
+                                    second: "2-digit",
+                                })}
+                            </ItemDescription>
+                        ) : (
+                            <Skeleton className="h-4 w-[200px] rounded" />
+                        )}
+                    </ItemDescription>
+                </ItemContent>
+                <ItemActions>
+                    <Button
+                        onClick={handleLogout}
+                        size="sm"
+                        variant="outline"
+                        className="cursor-pointer"
+                        disabled={loading}
+                    >
+                        {loading ? (
+                            <>
+                                <Spinner className="size-4 mr-2" />
+                                Signing out...
+                            </>
+                        ) : (
+                            "Sign out"
+                        )}
+                    </Button>
+                </ItemActions>
+            </Item>
+        </div>
+    );
+}

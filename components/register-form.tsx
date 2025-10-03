@@ -7,10 +7,10 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
+import Link from "next/link";
 
-export function LoginForm({
+export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
@@ -26,15 +26,15 @@ export function LoginForm({
         setLoading(true);
         setError(null);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        const { error } = await supabase.auth.signUp({
             email,
             password,
         });
 
         if (error) {
-            setError("Incorrect email or password");
+            setError(error.message);
         } else {
-            router.push("/dashboard");
+            router.push("/login");
         }
 
         setLoading(false);
@@ -46,15 +46,15 @@ export function LoginForm({
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col items-center gap-2">
                         <h1 className="text-xl font-bold">
-                            Login to your account
+                            Create your account
                         </h1>
                         <div className="text-center text-sm">
-                            Don&apos;t have an account?{" "}
+                            Already have an account?{" "}
                             <Link
-                                href="/register"
+                                href="/"
                                 className="underline underline-offset-4 hover:no-underline"
                             >
-                                Sign up
+                                Sign in
                             </Link>
                         </div>
                     </div>
@@ -73,12 +73,6 @@ export function LoginForm({
                         <div className="grid gap-3">
                             <div className="flex items-center">
                                 <Label htmlFor="password">Password</Label>
-                                <a
-                                    href="#"
-                                    className="ml-auto text-sm underline-offset-2 hover:underline"
-                                >
-                                    Forgot your password?
-                                </a>
                             </div>
                             <Input
                                 id="password"
@@ -101,10 +95,10 @@ export function LoginForm({
                             {loading ? (
                                 <>
                                     <Spinner className="size-4" />
-                                    Signing in...
+                                    Creating account...
                                 </>
                             ) : (
-                                "Sign In"
+                                "Sign Up"
                             )}
                         </Button>
                     </div>
