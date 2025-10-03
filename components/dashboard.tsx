@@ -2,9 +2,8 @@
 
 import * as React from "react";
 import Link from "next/link";
-import Logo from "@/components/Logo";
 import { supabase } from "@/utils/supabaseClient";
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -52,7 +51,10 @@ export function Dashboard() {
                 <ItemMedia>
                     <Avatar className="size-10">
                         <Link href="/dashboard">
-                            <Logo />
+                            <Avatar className="size-10">
+                                <AvatarImage src="https://github.com/evilrabbit.png" />
+                                <AvatarFallback>ER</AvatarFallback>
+                            </Avatar>
                         </Link>
                     </Avatar>
                 </ItemMedia>
