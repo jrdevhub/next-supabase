@@ -6,7 +6,7 @@
 
 A boilerplate template for building modern websites with **Next.js** and **Supabase**, designed for fast development and easy customization.
 
-[Check out the demo](https://user.github.io/next-supabase)
+[Check out the demo](https://jrdevhub.github.io/next-supabase)
 
 ## Getting started
 
