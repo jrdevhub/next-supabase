@@ -120,3 +120,25 @@
         @apply bg-background text-foreground;
     }
 }
+
+.pm__title {
+    display: unset !important;
+
+    small {
+        display: block;
+        margin-top: 0.5em;
+        font-weight: 400;
+    }
+}
+
+#cc-main .pm-overlay {
+    backdrop-filter: blur(3px) !important;
+}
+
+#cc-main .pm__section-desc p {
+    display: block;
+}
+
+#cc-main .pm__close-btn {
+    border-radius: 100% !important;
+}

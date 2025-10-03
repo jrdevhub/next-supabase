@@ -1,7 +1,6 @@
 "use client";
 
 import * as React from "react";
-import Link from "next/link";
 import { supabase } from "@/utils/supabaseClient";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -49,18 +48,22 @@ export function Dashboard() {
         <div className="flex w-full max-w-lg flex-col">
             <Item variant="outline">
                 <ItemMedia>
-                    <Avatar className="size-10">
-                        <Link href="/dashboard">
-                            <Avatar className="size-10">
-                                <AvatarImage src="https://github.com/evilrabbit.png" />
-                                <AvatarFallback>ER</AvatarFallback>
-                            </Avatar>
-                        </Link>
-                    </Avatar>
+                    {email ? (
+                        <Avatar className="size-10">
+                            <AvatarImage src="https://github.com/evilrabbit.png" />
+                            <AvatarFallback>ER</AvatarFallback>
+                        </Avatar>
+                    ) : (
+                        <Skeleton className="size-10 rounded-full animate-pulse" />
+                    )}
                 </ItemMedia>
                 <ItemContent>
                     <ItemTitle>
-                        {email ? email : <Skeleton className="h-4 w-[150px]" />}
+                        {email ? (
+                            email
+                        ) : (
+                            <Skeleton className="h-4 w-[150px] animate-pulse" />
+                        )}
                     </ItemTitle>
 
                     <ItemDescription className="text-xs">
@@ -77,7 +80,7 @@ export function Dashboard() {
                                 })}
                             </ItemDescription>
                         ) : (
-                            <Skeleton className="h-4 w-[200px] rounded" />
+                            <Skeleton className="h-3 w-[175px] rounded-full animate-pulse" />
                         )}
                     </ItemDescription>
                 </ItemContent>
