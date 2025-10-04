@@ -6,7 +6,6 @@ import Logo from "@/components/Logo";
 import Link from "next/link";
 import { ThemeProvider } from "@/components/theme-provider";
 import SelfXSSWarning from "@/components/SelfXSSWarning";
-import CookieConsent from "@/components/CookieConsent";
 
 export const metadata: Metadata = {
     title: "Next & Supabase",
@@ -40,7 +39,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
                         </div>
                     </AuthProvider>
                 </ThemeProvider>
-                <CookieConsent />
                 <SelfXSSWarning />
             </body>
         </html>

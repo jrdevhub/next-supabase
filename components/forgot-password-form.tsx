@@ -1,10 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabaseClient";
-
-import { AlertCircleIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,35 +11,34 @@ import {
     FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon, CheckCircle2 } from "lucide-react";
 
-export function LoginForm({
+export function ForgotPasswordForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
-    const router = useRouter();
-
     const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+        setSuccess(false);
 
-        const { error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+            redirectTo: `${window.location.origin}/reset-password`,
+            // stránka, kam Supabase pošle uživatele po kliknutí na odkaz v e‑mailu
         });
 
         if (error) {
-            setError("Incorrect email or password.");
+            setError(error.message);
         } else {
-            router.push("/dashboard");
+            setSuccess(true);
         }
 
         setLoading(false);
@@ -54,16 +50,10 @@ export function LoginForm({
                 <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <h1 className="text-xl font-bold">
-                            Login to your account
+                            Forgot your password?
                         </h1>
                         <FieldDescription>
-                            Don&apos;t have an account?{" "}
-                            <Link
-                                href="/sign-up"
-                                className="underline underline-offset-4 hover:no-underline"
-                            >
-                                Sign up
-                            </Link>
+                            Enter your email and we’ll send you a reset link.
                         </FieldDescription>
                     </div>
 
@@ -78,25 +68,7 @@ export function LoginForm({
                             required
                         />
                     </Field>
-                    <Field>
-                        <div className="flex items-center">
-                            <FieldLabel htmlFor="password">Password</FieldLabel>
-                            <Link
-                                href="/forgot-password"
-                                className="ml-auto text-sm underline-offset-2 hover:underline"
-                            >
-                                Forgot your password?
-                            </Link>
-                        </div>
-                        <Input
-                            id="password"
-                            type="password"
-                            placeholder="••••••••"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            required
-                        />
-                    </Field>
+
                     <Field>
                         <Button
                             type="submit"
@@ -106,28 +78,31 @@ export function LoginForm({
                             {loading ? (
                                 <>
                                     <Spinner className="size-4" />
-                                    Signing in...
+                                    Sending reset link...
                                 </>
                             ) : (
-                                "Sign in"
+                                "Send reset link"
                             )}
                         </Button>
                     </Field>
                 </FieldGroup>
             </form>
 
-            <FieldDescription className="px-6 text-center">
-                By clicking continue, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>.
-            </FieldDescription>
-
             {error && (
                 <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
                     <Alert variant="destructive">
                         <AlertCircleIcon />
+                        <AlertTitle>{error}</AlertTitle>
+                    </Alert>
+                </div>
+            )}
+
+            {success && (
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
+                    <Alert className="text-green-700">
+                        <CheckCircle2 />
                         <AlertTitle>
-                            Please check your account details and try again.
+                            Reset link has been sent to your email.
                         </AlertTitle>
                     </Alert>
                 </div>

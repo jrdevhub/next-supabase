@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabaseClient";
 import { Spinner } from "@/components/ui/spinner";
 
-const whitelist = ["/", "/register", "/privacy"];
+const whitelist = ["/", "/sign-up", "/forgot-password", "/reset-password"];
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
     const router = useRouter();
