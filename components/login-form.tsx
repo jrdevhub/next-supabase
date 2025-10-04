@@ -43,12 +43,8 @@ export function LoginForm({
         } else {
             await supabase.auth.signInWithOtp({
                 email,
-                options: {
-                    shouldCreateUser: false,
-                    emailRedirectTo: undefined,
-                },
+                options: { shouldCreateUser: false },
             });
-
             router.push(`/otp?email=${encodeURIComponent(email)}`);
         }
 
