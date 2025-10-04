@@ -43,11 +43,24 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
 
         if (error) {
             setError("Invalid code, please try again.");
-        } else {
-            router.push("/dashboard");
+            setLoading(false);
+            return;
         }
+
+        const { error: updateError } = await supabase.auth.updateUser({
+            data: { otp_verified: true },
+        });
+
+        if (updateError) {
+            setError("Failed to verify OTP.");
+            setLoading(false);
+            return;
+        }
+
+        router.push("/dashboard");
         setLoading(false);
     }
+
     return (
         <div className={cn("flex flex-col gap-6", className)} {...props}>
             <form onSubmit={handleVerify}>

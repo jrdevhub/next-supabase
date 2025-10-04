@@ -33,23 +33,42 @@ export function LoginForm({
         setLoading(true);
         setError(null);
 
-        const { error } = await supabase.auth.signInWithPassword({
+        // Přihlášení přes heslo
+        const { error: signInError } = await supabase.auth.signInWithPassword({
             email,
             password,
         });
 
-        if (error) {
+        if (signInError) {
             setError("Incorrect email or password.");
-        } else {
-            /*
-            await supabase.auth.signInWithOtp({
-                email,
-                options: { shouldCreateUser: false },
-            });
-            router.push(`/otp?email=${encodeURIComponent(email)}`);
-            */
-            router.push("/dashboard");
+            setLoading(false);
+            return;
         }
+
+        // Nastavení otp_verified na false, protože uživatel ještě neověřil OTP
+        const { error: updateError } = await supabase.auth.updateUser({
+            data: { otp_verified: false },
+        });
+
+        if (updateError) {
+            setError("Failed to initialize OTP verification.");
+            setLoading(false);
+            return;
+        }
+
+        // Odeslat OTP na email
+        const { error: otpError } = await supabase.auth.signInWithOtp({
+            email,
+            options: { shouldCreateUser: false },
+        });
+
+        if (otpError) {
+            setError("Failed to send verification code.");
+            setLoading(false);
+            return;
+        }
+
+        router.push(`/otp?email=${encodeURIComponent(email)}`);
         setLoading(false);
     };
 

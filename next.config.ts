@@ -7,7 +7,7 @@ const withBundleAnalyzer = require("@next/bundle-analyzer")({
 */
 
 const nextConfig: NextConfig = {
-    basePath: "/next",
+    basePath: "/next-supabase",
     poweredByHeader: false,
     output: "export",
     images: {

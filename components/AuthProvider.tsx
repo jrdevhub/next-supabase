@@ -32,11 +32,37 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
             if (!session && !isWhitelisted) {
                 router.replace("/");
-            } else if (session && pathname === "/") {
-                router.replace("/dashboard");
-            } else {
-                setLoading(false);
+                return;
             }
+
+            if (session) {
+                // Načteme uživatele
+                const { data: userData, error } = await supabase.auth.getUser();
+
+                if (error) {
+                    router.replace("/");
+                    return;
+                }
+
+                const otpVerified =
+                    userData?.user.user_metadata?.otp_verified === true;
+
+                if (!otpVerified && pathname !== "/otp") {
+                    if (userData?.user?.email) {
+                        router.replace(
+                            `/otp?email=${encodeURIComponent(userData.user.email)}`,
+                        );
+                    }
+                    return;
+                }
+
+                if (otpVerified && pathname === "/") {
+                    router.replace("/dashboard");
+                    return;
+                }
+            }
+
+            setLoading(false);
         };
 
         checkSession();
