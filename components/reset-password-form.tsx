@@ -47,7 +47,6 @@ export function ResetPasswordForm({
             setError(error.message);
         } else {
             setSuccess(true);
-            // Po chvíli přesměrujeme na login
             setTimeout(() => router.push("/login"), 2000);
         }
 
