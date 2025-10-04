@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { supabase } from "@/utils/supabaseClient";
+import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
@@ -19,6 +20,7 @@ export function Dashboard() {
     const [email, setEmail] = React.useState<string | null>(null);
     const [createdAt, setCreatedAt] = React.useState<string | null>(null);
     const [loading, setLoading] = React.useState(false);
+    const router = useRouter();
 
     React.useEffect(() => {
         async function fetchUser() {
@@ -40,7 +42,7 @@ export function Dashboard() {
             console.error("Sign out error:", error.message);
             setLoading(false);
         } else {
-            window.location.href = "/";
+            router.push("/");
         }
     }
 
