@@ -113,7 +113,7 @@ export function ResetPasswordForm({
 
             {error && (
                 <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
-                    <Alert variant="destructive" className="justify-around">
+                    <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertTitle>{error}</AlertTitle>
                     </Alert>
@@ -122,7 +122,7 @@ export function ResetPasswordForm({
 
             {success && (
                 <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
-                    <Alert className="justify-around border-green-500 text-green-700">
+                    <Alert className="text-green-700">
                         <CheckCircle2 />
                         <AlertTitle>Password updated successfully!</AlertTitle>
                     </Alert>

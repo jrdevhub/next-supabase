@@ -41,13 +41,15 @@ export function LoginForm({
         if (error) {
             setError("Incorrect email or password.");
         } else {
+            /*
             await supabase.auth.signInWithOtp({
                 email,
                 options: { shouldCreateUser: false },
             });
             router.push(`/otp?email=${encodeURIComponent(email)}`);
+            */
+            router.push("/dashboard");
         }
-
         setLoading(false);
     };
 
@@ -75,7 +77,7 @@ export function LoginForm({
                         <Input
                             id="email"
                             type="email"
-                            placeholder="m@example.com"
+                            placeholder="user@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
