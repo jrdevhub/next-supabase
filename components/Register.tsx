@@ -96,6 +96,10 @@ export function RegisterForm({
                             onChange={(e) => setPassword(e.target.value)}
                             required
                         />
+                        <FieldDescription>
+                            Must include at least 12 characters,
+                            upper/lowercase, number, and special characters.
+                        </FieldDescription>
                     </Field>
 
                     <Field>
