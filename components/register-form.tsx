@@ -51,15 +51,13 @@ export function RegisterForm({
             return;
         }
 
-        // Pokud uživatel existuje, ale není potvrzený
         if (data?.user && !data.user.confirmed_at) {
             setError("This email is already registered.");
             setLoading(false);
             return;
         }
 
-        // Pokud vše proběhlo OK
-        router.push("/login");
+        router.push("/");
         setLoading(false);
     };
 
@@ -74,7 +72,7 @@ export function RegisterForm({
                         <FieldDescription>
                             Already have an account?{" "}
                             <Link
-                                href="/login"
+                                href="/"
                                 className="underline underline-offset-4 hover:no-underline"
                             >
                                 Sign in
@@ -127,12 +125,12 @@ export function RegisterForm({
 
             <FieldDescription className="px-6 text-center">
                 By clicking continue, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>.
+                <Link href="/terms">Terms of Service</Link> and{" "}
+                <Link href="/privacy">Privacy Policy</Link>.
             </FieldDescription>
 
             {error && (
-                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertTitle>{error}</AlertTitle>

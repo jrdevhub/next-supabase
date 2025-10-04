@@ -41,7 +41,12 @@ export function LoginForm({
         if (error) {
             setError("Incorrect email or password.");
         } else {
-            router.push("/dashboard");
+            // pošleme OTP kód
+            await supabase.auth.signInWithOtp({
+                email,
+                options: { shouldCreateUser: false },
+            });
+            router.push(`/otp?email=${encodeURIComponent(email)}`);
         }
 
         setLoading(false);
@@ -117,12 +122,12 @@ export function LoginForm({
 
             <FieldDescription className="px-6 text-center">
                 By clicking continue, you agree to our{" "}
-                <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>.
+                <Link href="/terms">Terms of Service</Link> and{" "}
+                <Link href="/privacy">Privacy Policy</Link>.
             </FieldDescription>
 
             {error && (
-                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertTitle>

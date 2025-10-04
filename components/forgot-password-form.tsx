@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { AlertCircleIcon, CheckCircle2 } from "lucide-react";
+import Link from "next/link";
 
 export function ForgotPasswordForm({
     className,
@@ -88,8 +89,18 @@ export function ForgotPasswordForm({
                 </FieldGroup>
             </form>
 
+            <FieldDescription className="px-6 text-center">
+                Do you remember your password?{" "}
+                <Link
+                    href="/"
+                    className="inline-flex items-center gap-2 underline underline-offset-4 hover:no-underline"
+                >
+                    Sign in
+                </Link>
+            </FieldDescription>
+
             {error && (
-                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertTitle>{error}</AlertTitle>
@@ -98,7 +109,7 @@ export function ForgotPasswordForm({
             )}
 
             {success && (
-                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50 w-full max-w-sm">
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
                     <Alert className="text-green-700">
                         <CheckCircle2 />
                         <AlertTitle>
