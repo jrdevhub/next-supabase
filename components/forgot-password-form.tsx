@@ -31,8 +31,8 @@ export function ForgotPasswordForm({
         setSuccess(false);
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password`,
-            // stránka, kam Supabase pošle uživatele po kliknutí na odkaz v e‑mailu
+            redirectTo:
+                "https://jrdevhub.github.io/next-supabase/reset-password",
         });
 
         if (error) {
