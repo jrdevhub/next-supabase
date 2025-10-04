@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabaseClient";
-import { AlertCircleIcon, CheckCircle2 } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,43 +13,45 @@ import {
     FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 
-export function ResetPasswordForm({
+export function RegisterForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
     const router = useRouter();
 
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [confirm, setConfirm] = useState("");
-    const [loading, setLoading] = useState(false);
+    const [confirmPassword, setConfirmPassword] = useState(""); // nové pole pro potvrzení hesla
     const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setLoading(true);
         setError(null);
 
-        if (password !== confirm) {
+        if (password !== confirmPassword) {
             setError("Passwords do not match.");
+            setLoading(false);
             return;
         }
 
-        setLoading(true);
-
-        const { error } = await supabase.auth.updateUser({
+        const { error } = await supabase.auth.signUp({
+            email,
             password,
         });
 
         if (error) {
             setError(error.message);
-        } else {
-            setSuccess(true);
-            setTimeout(() => router.push("/login"), 2000);
+            setLoading(false);
+            return;
         }
 
+        router.push("/");
         setLoading(false);
     };
 
@@ -59,15 +61,33 @@ export function ResetPasswordForm({
                 <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <h1 className="text-xl font-bold">
-                            Reset your password
+                            Create your account
                         </h1>
                         <FieldDescription>
-                            Enter your new password below.
+                            Already have an account?{" "}
+                            <Link
+                                href="/"
+                                className="underline underline-offset-4 hover:no-underline"
+                            >
+                                Sign in
+                            </Link>
                         </FieldDescription>
                     </div>
 
                     <Field>
-                        <FieldLabel htmlFor="password">New Password</FieldLabel>
+                        <FieldLabel htmlFor="email">Email</FieldLabel>
+                        <Input
+                            id="email"
+                            type="email"
+                            placeholder="user@example.com"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="password">Password</FieldLabel>
                         <Input
                             id="password"
                             type="password"
@@ -79,15 +99,15 @@ export function ResetPasswordForm({
                     </Field>
 
                     <Field>
-                        <FieldLabel htmlFor="confirm">
+                        <FieldLabel htmlFor="confirm-password">
                             Confirm Password
                         </FieldLabel>
                         <Input
-                            id="confirm"
+                            id="confirm-password"
                             type="password"
                             placeholder="••••••••"
-                            value={confirm}
-                            onChange={(e) => setConfirm(e.target.value)}
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
                             required
                         />
                     </Field>
@@ -101,30 +121,27 @@ export function ResetPasswordForm({
                             {loading ? (
                                 <>
                                     <Spinner className="size-4" />
-                                    Updating password...
+                                    Creating account...
                                 </>
                             ) : (
-                                "Update Password"
+                                "Create Account"
                             )}
                         </Button>
                     </Field>
                 </FieldGroup>
             </form>
 
+            <FieldDescription className="px-6 text-center">
+                By clicking continue, you agree to our{" "}
+                <Link href="/terms">Terms of Service</Link> and{" "}
+                <Link href="/privacy">Privacy Policy</Link>.
+            </FieldDescription>
+
             {error && (
                 <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertTitle>{error}</AlertTitle>
-                    </Alert>
-                </div>
-            )}
-
-            {success && (
-                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
-                    <Alert className="text-green-700">
-                        <CheckCircle2 />
-                        <AlertTitle>Password updated successfully!</AlertTitle>
                     </Alert>
                 </div>
             )}

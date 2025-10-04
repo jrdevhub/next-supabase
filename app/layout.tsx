@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/components/AuthProvider";
-import { ThemeToggler } from "@/components/theme-toggler";
+import { ThemeToggler } from "@/components/ThemeToggler";
 import Logo from "@/components/Logo";
 import Link from "next/link";
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import SelfXSSWarning from "@/components/SelfXSSWarning";
 
 export const metadata: Metadata = {

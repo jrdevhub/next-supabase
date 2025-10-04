@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/utils/supabaseClient";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -13,51 +13,43 @@ import {
     FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { Spinner } from "@/components/ui/spinner";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 
-export function RegisterForm({
+export function ResetPasswordForm({
     className,
     ...props
 }: React.ComponentProps<"div">) {
     const router = useRouter();
 
-    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
+    const [confirm, setConfirm] = useState("");
     const [loading, setLoading] = useState(false);
-
-    useEffect(() => {
-        if (error) {
-            const timer = setTimeout(() => setError(null), 4000);
-            return () => clearTimeout(timer);
-        }
-    }, [error]);
+    const [error, setError] = useState<string | null>(null);
+    const [success, setSuccess] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setLoading(true);
         setError(null);
 
-        const { data, error } = await supabase.auth.signUp({
-            email,
+        if (password !== confirm) {
+            setError("Passwords do not match.");
+            return;
+        }
+
+        setLoading(true);
+
+        const { error } = await supabase.auth.updateUser({
             password,
         });
 
         if (error) {
             setError(error.message);
-            setLoading(false);
-            return;
+        } else {
+            setSuccess(true);
+            setTimeout(() => router.push("/"), 2000);
         }
 
-        if (data?.user && !data.user.confirmed_at) {
-            setError("This email is already registered.");
-            setLoading(false);
-            return;
-        }
-
-        router.push("/");
         setLoading(false);
     };
 
@@ -67,39 +59,35 @@ export function RegisterForm({
                 <FieldGroup>
                     <div className="flex flex-col items-center gap-2 text-center">
                         <h1 className="text-xl font-bold">
-                            Create your account
+                            Reset your password
                         </h1>
                         <FieldDescription>
-                            Already have an account?{" "}
-                            <Link
-                                href="/"
-                                className="underline underline-offset-4 hover:no-underline"
-                            >
-                                Sign in
-                            </Link>
+                            Enter your new password below.
                         </FieldDescription>
                     </div>
 
                     <Field>
-                        <FieldLabel htmlFor="email">Email</FieldLabel>
-                        <Input
-                            id="email"
-                            type="email"
-                            placeholder="user@example.com"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            required
-                        />
-                    </Field>
-
-                    <Field>
-                        <FieldLabel htmlFor="password">Password</FieldLabel>
+                        <FieldLabel htmlFor="password">New Password</FieldLabel>
                         <Input
                             id="password"
                             type="password"
                             placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </Field>
+
+                    <Field>
+                        <FieldLabel htmlFor="confirm">
+                            Confirm Password
+                        </FieldLabel>
+                        <Input
+                            id="confirm"
+                            type="password"
+                            placeholder="••••••••"
+                            value={confirm}
+                            onChange={(e) => setConfirm(e.target.value)}
                             required
                         />
                     </Field>
@@ -113,27 +101,30 @@ export function RegisterForm({
                             {loading ? (
                                 <>
                                     <Spinner className="size-4" />
-                                    Creating account...
+                                    Updating password...
                                 </>
                             ) : (
-                                "Create Account"
+                                "Update Password"
                             )}
                         </Button>
                     </Field>
                 </FieldGroup>
             </form>
 
-            <FieldDescription className="px-6 text-center">
-                By clicking continue, you agree to our{" "}
-                <Link href="/terms">Terms of Service</Link> and{" "}
-                <Link href="/privacy">Privacy Policy</Link>.
-            </FieldDescription>
-
             {error && (
                 <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
                     <Alert variant="destructive">
                         <AlertCircleIcon />
                         <AlertTitle>{error}</AlertTitle>
+                    </Alert>
+                </div>
+            )}
+
+            {success && (
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
+                    <Alert className="text-green-700">
+                        <CheckCircle2 />
+                        <AlertTitle>Password updated successfully!</AlertTitle>
                     </Alert>
                 </div>
             )}

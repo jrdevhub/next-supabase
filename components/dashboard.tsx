@@ -15,6 +15,7 @@ import {
     ItemMedia,
     ItemTitle,
 } from "@/components/ui/item";
+import { debug } from "@/utils/debug";
 
 export function Dashboard() {
     const [email, setEmail] = React.useState<string | null>(null);
@@ -41,7 +42,7 @@ export function Dashboard() {
         setLoading(true);
         const { error } = await supabase.auth.signOut();
         if (error) {
-            console.error("Sign out error:", error.message);
+            debug("log", "[Supabase] Sign out error:", error.message);
             setLoading(false);
         } else {
             router.push("/");
