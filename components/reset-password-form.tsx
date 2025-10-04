@@ -104,7 +104,7 @@ export function ResetPasswordForm({
                                     Updating password...
                                 </>
                             ) : (
-                                "Update password"
+                                "Update Password"
                             )}
                         </Button>
                     </Field>

@@ -116,7 +116,7 @@ export function RegisterForm({
                                     Creating account...
                                 </>
                             ) : (
-                                "Sign Up"
+                                "Create Account"
                             )}
                         </Button>
                     </Field>

@@ -82,7 +82,7 @@ export function ForgotPasswordForm({
                                     Sending reset link...
                                 </>
                             ) : (
-                                "Send reset link"
+                                "Send Reset Link"
                             )}
                         </Button>
                     </Field>

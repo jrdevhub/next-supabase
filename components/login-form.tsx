@@ -114,7 +114,7 @@ export function LoginForm({
                                     Signing in...
                                 </>
                             ) : (
-                                "Sign in"
+                                "Login"
                             )}
                         </Button>
                     </Field>
