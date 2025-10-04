@@ -41,11 +41,14 @@ export function LoginForm({
         if (error) {
             setError("Incorrect email or password.");
         } else {
-            // pošleme OTP kód
             await supabase.auth.signInWithOtp({
                 email,
-                options: { shouldCreateUser: false },
+                options: {
+                    shouldCreateUser: false,
+                    emailRedirectTo: undefined,
+                },
             });
+
             router.push(`/otp?email=${encodeURIComponent(email)}`);
         }
 
