@@ -16,6 +16,7 @@ import {
     ItemTitle,
 } from "@/components/ui/item";
 import { debug } from "@/utils/debug";
+import { BadgeCheckIcon } from "lucide-react";
 
 export function Dashboard() {
     const [email, setEmail] = React.useState<string | null>(null);
@@ -65,7 +66,10 @@ export function Dashboard() {
                 <ItemContent>
                     <ItemTitle>
                         {email ? (
-                            email
+                            <span className="flex items-center gap-1">
+                                {email}
+                                <BadgeCheckIcon className="w-3 h-3" />
+                            </span>
                         ) : (
                             <Skeleton className="h-4 w-[150px] animate-pulse" />
                         )}

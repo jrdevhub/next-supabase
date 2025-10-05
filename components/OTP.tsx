@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { supabase } from "@/utils/supabaseClient";
-import { AlertCircleIcon } from "lucide-react";
+import { AlertCircleIcon, CircleCheck } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -29,6 +29,18 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
     const [otp, setOtp] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [resending, setResending] = useState(false);
+    const [resendSuccess, setResendSuccess] = useState(false);
+    const [cooldown, setCooldown] = useState(0);
+
+    // Countdown effect for 30s cooldown
+    useEffect(() => {
+        let timer: NodeJS.Timeout;
+        if (cooldown > 0) {
+            timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+        }
+        return () => clearTimeout(timer);
+    }, [cooldown]);
 
     async function handleVerify(e: React.FormEvent) {
         e.preventDefault();
@@ -59,6 +71,26 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
 
         router.push("/dashboard");
         setLoading(false);
+    }
+
+    async function handleResendCode(e: React.MouseEvent) {
+        e.preventDefault();
+        if (cooldown > 0 || resending) return;
+
+        setResending(true);
+        setError(null);
+        setResendSuccess(false);
+
+        const { error } = await supabase.auth.signInWithOtp({ email });
+
+        if (error) {
+            setError("Failed to resend code. Please try again.");
+        } else {
+            setResendSuccess(true);
+            setCooldown(30); // start 30s cooldown
+        }
+
+        setResending(false);
     }
 
     return (
@@ -98,7 +130,18 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
                             </InputOTPGroup>
                         </InputOTP>
                         <FieldDescription className="text-center">
-                            Didn&apos;t receive the code? <a href="#">Resend</a>
+                            Didn&apos;t receive the code?{" "}
+                            <button
+                                onClick={handleResendCode}
+                                className="underline hover:no-underline cursor-pointer disabled:cursor-auto"
+                                disabled={resending || cooldown > 0}
+                            >
+                                {resending
+                                    ? "Sending..."
+                                    : cooldown > 0
+                                      ? `Resend in ${cooldown}s`
+                                      : "Resend"}
+                            </button>
                         </FieldDescription>
                     </Field>
                     <Field>
@@ -117,6 +160,17 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
                 <Link href="/terms">Terms of Service</Link> and{" "}
                 <Link href="/privacy">Privacy Policy</Link>.
             </FieldDescription>
+
+            {resendSuccess && (
+                <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
+                    <Alert variant="destructive" className="text-green-700">
+                        <CircleCheck />
+                        <AlertTitle>
+                            New code has been sent to your email.
+                        </AlertTitle>
+                    </Alert>
+                </div>
+            )}
 
             {error && (
                 <div className="fixed bottom-[30px] left-1/2 -translate-x-1/2 z-50">
