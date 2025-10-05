@@ -20,6 +20,7 @@ import {
     InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Alert, AlertTitle } from "@/components/ui/alert";
+import { Spinner } from "@/components/ui/spinner";
 
 export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
     const router = useRouter();
@@ -33,14 +34,20 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
     const [resendSuccess, setResendSuccess] = useState(false);
     const [cooldown, setCooldown] = useState(0);
 
-    // Countdown effect for 30s cooldown
     useEffect(() => {
-        let timer: NodeJS.Timeout;
-        if (cooldown > 0) {
-            timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
+        if (cooldown === 0 && email) {
+            setCooldown(30);
         }
-        return () => clearTimeout(timer);
-    }, [cooldown]);
+
+        const timer =
+            cooldown > 0
+                ? setTimeout(() => setCooldown(cooldown - 1), 1000)
+                : null;
+
+        return () => {
+            if (timer) clearTimeout(timer);
+        };
+    }, [cooldown, email]);
 
     async function handleVerify(e: React.FormEvent) {
         e.preventDefault();
@@ -87,7 +94,7 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
             setError("Failed to resend code. Please try again.");
         } else {
             setResendSuccess(true);
-            setCooldown(30); // start 30s cooldown
+            setCooldown(30);
         }
 
         setResending(false);
@@ -150,7 +157,14 @@ export function OTPForm({ className, ...props }: React.ComponentProps<"div">) {
                             disabled={loading}
                             className="cursor-pointer"
                         >
-                            {loading ? "Verifying..." : "Verify"}
+                            {loading ? (
+                                <>
+                                    <Spinner className="size-4" />
+                                    Verifying...
+                                </>
+                            ) : (
+                                "Verify"
+                            )}
                         </Button>
                     </Field>
                 </FieldGroup>
